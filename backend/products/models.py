@@ -1,6 +1,5 @@
 from django.db import models
 
-
 class Product(models.Model):
     # pk by default
     title = models.CharField(max_length=120)
