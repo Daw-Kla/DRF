@@ -7,11 +7,16 @@ from .models import Product
 from .serializers import ProductSerializer
 from .permissions import IsStaffEditorPermission
 
+from api.authentication import TokenAuthentication
+
 # class based views
 class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    authentication_classes = [authentication.SessionAuthentication]
+    authentication_classes = [authentication.SessionAuthentication,
+                              #authentication.TokenAuthentication,      #keyword was token
+                              TokenAuthentication                       #keyword in Bearer
+    ]
     #permission is only to single view
     permission_classes = [IsStaffEditorPermission]
 
