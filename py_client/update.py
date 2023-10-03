@@ -10,8 +10,8 @@ if product_id:
     endpoint = f'http://localhost:8000/api/products/{product_id}/update/'
 
     data = {
-        'title': 'New title by update',
-        'price': 123.00
+        'title': 'Hello world 1',
+        'price': 1.00
     }
 
     get_response = requests.put(endpoint, json=data, verify=False)
