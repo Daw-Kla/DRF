@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api',
+    'search',
     'products',
     'rest_framework',
     'rest_framework.authtoken',
@@ -142,5 +143,7 @@ REST_FRAMEWORK ={
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly'       #GET for everyone
-    ]
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',      #pagination in REST view 
+    'PAGE_SIZE': 10
 }
