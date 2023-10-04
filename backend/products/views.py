@@ -1,24 +1,26 @@
 from django.shortcuts import render, get_object_or_404
-from rest_framework import authentication, generics, mixins, permissions
+from rest_framework import generics, mixins
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from .models import Product
 from .serializers import ProductSerializer
-from .permissions import IsStaffEditorPermission
 
-from api.authentication import TokenAuthentication
+from api.mixins import StaffEditorPermissionMixin, UserQuerySetMixin
+
 
 # class based views
-class ProductListCreateAPIView(generics.ListCreateAPIView):
+class ProductListCreateAPIView(StaffEditorPermissionMixin,
+                               UserQuerySetMixin,
+                               generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    authentication_classes = [authentication.SessionAuthentication,
-                              #authentication.TokenAuthentication,      #keyword was token
-                              TokenAuthentication                       #keyword in Bearer
-    ]
+    # authentication_classes = [authentication.SessionAuthentication,
+    #                           #authentication.TokenAuthentication,      #keyword was token
+    #                           TokenAuthentication                       #keyword in Bearer
+    # ]
     #permission is only to single view
-    permission_classes = [IsStaffEditorPermission]
+    #permission_classes = [IsStaffEditorPermission]
 
     def perform_create(self, serializer):
         #serializer.save(user=self.request.user)
@@ -26,19 +28,28 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
         content = serializer.validated_data.get('content') or None
         if content is None:
             content = title
-        serializer.save(content=content)
+        serializer.save(user=self.request.user, content=content)
 
+    # def get_queryset(self, *args, **kwargs):
+    #     qs = super().get_queryset(*args, **kwargs)
+    #     request = self.request
+    #     user = request.user
+    #     if not user.is_authenticated:
+    #         return Product.objects.none()
+    #     return qs.filter(user=request.user)
 
-class ProductDeailAPIView(generics.RetrieveAPIView):
+class ProductDeailAPIView(StaffEditorPermissionMixin,
+                          UserQuerySetMixin, 
+                          generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
-
-class ProductUpdateAPIView(generics.UpdateAPIView):
+class ProductUpdateAPIView(StaffEditorPermissionMixin,
+                           UserQuerySetMixin, 
+                           generics.UpdateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'pk'
-    permission_classes = [permissions.DjangoModelPermissions]
 
     def perform_update(self, serializer):
         instance = serializer.save()
@@ -47,7 +58,9 @@ class ProductUpdateAPIView(generics.UpdateAPIView):
             instance.content = instance.title
 
 
-class ProductDeleteAPIView(generics.DestroyAPIView):
+class ProductDeleteAPIView(StaffEditorPermissionMixin,
+                           UserQuerySetMixin, 
+                           generics.DestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'pk'
@@ -101,6 +114,7 @@ class ProductMixinView(mixins.ListModelMixin,
     def get(self, request, *args, **kwargs):
         print(args, kwargs)
         pk = kwargs.get('pk')
+
         if pk is not None:
             return self.retrieve(request, *args, **kwargs)
         return self.list(request, *args, **kwargs)
