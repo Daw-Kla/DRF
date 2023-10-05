@@ -23,24 +23,23 @@ class ProductSerializer(serializers.ModelSerializer):
             lookup_field='pk'
     )
 
-    #email = serializers.EmailField(write_only=True)
     title = serializers.CharField(validators=[validate_title_no_hello, validate_title])
- 
+    body = serializers.CharField(source='content')
     class Meta:
         model = Product
         fields = [
             'owner',
             'url',
             'edit_url',
-            #'email',
             'pk',
             'title',
-            'content',
+            'body',
             'price', 
             'sale_price',
             'my_discount',
             #'related_product',
             'public',
+            'path',
         ]
 
     # filed validation method validae_<field name>, i did it in .validators

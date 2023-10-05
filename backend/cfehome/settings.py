@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import datetime
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -42,10 +43,12 @@ INSTALLED_APPS = [
     # third party packages
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_simplejwt',
     #internan apps
     'api',
     'search',
     'products',
+    'articles',
     
 ]
 
@@ -142,9 +145,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #     ]
     
 REST_FRAMEWORK ={
-    'DEFAULT_AUTHENTICATION_CLASSES': [
+    'DEFAULT_AUTHENTICATION_CLASSES': [                             #ordering does matter
         'rest_framework.authentication.SessionAuthentication',
-        'api.authentication.TokenAuthentication'
+        'api.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly'       #GET for everyone
@@ -158,4 +162,10 @@ ALGOLIA = {
     'APPLICATION_ID': 'CHHVXGPJDN',
     'API_KEY': '67ddbc40dc268103cc115f91b26d1fa2',
     'INDEX_PREFIX': 'cfe'
+}
+
+SIMPLE_JWT = {
+    'AUTH_HEADERS_TYPES': ['Bearer'],
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(seconds=30),
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=1),
 }
