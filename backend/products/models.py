@@ -2,7 +2,11 @@ from django.db import models
 from django.conf import settings
 from django.db.models import Q
 
+import random
+
 User = settings.AUTH_USER_MODEL
+
+TAGS_MODEL_VALUES = ['val1', 'val2', 'val3', 'val4', 'val5']
 
 class ProductQuerySet(models.QuerySet):
     def is_public(self):
@@ -40,3 +44,10 @@ class Product(models.Model):
     
     def get_discount(self):
         return 3.33
+    
+    def is_public(self) -> bool:
+        return self.public      #True or False
+    
+    #random tags for filtering in algolia
+    def get_tags_list(self):
+        return [random.choice(TAGS_MODEL_VALUES)]
