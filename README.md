@@ -1,5 +1,5 @@
 # DRF
-Django REST Framework
+Django REST Framework app
 
 This project is a simple visualisation of most popular Django REST API functionalities such as:
 * creating a model instance in DB
